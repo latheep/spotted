@@ -317,7 +317,9 @@
 
                     <div class="form-group">
                         <label for="productFeatures">Features (one per line)</label>
-                        <textarea id="productFeatures" placeholder="High quality materials&#10;Perfect fit&#10;Machine washable" rows="4"></textarea>
+                        <textarea id="productFeatures" placeholder="High quality materials
+Perfect fit
+Machine washable" rows="4"></textarea>
                     </div>
 
                     <div class="form-group">
@@ -570,15 +572,37 @@
                 return;
             }
 
-            navigator.clipboard.writeText(generatedHTML).then(() => {
-                const notification = document.getElementById('copyNotification');
-                notification.classList.add('show');
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                }, 3000);
-            }).catch(err => {
-                alert('Failed to copy: ' + err);
-            });
+            // Check if clipboard API is available
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(generatedHTML).then(() => {
+                    const notification = document.getElementById('copyNotification');
+                    notification.classList.add('show');
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                }).catch(err => {
+                    alert('Failed to copy: ' + err);
+                });
+            } else {
+                // Fallback method for browsers without clipboard API
+                const textarea = document.createElement('textarea');
+                textarea.value = generatedHTML;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    const notification = document.getElementById('copyNotification');
+                    notification.classList.add('show');
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                } catch (err) {
+                    alert('Failed to copy: ' + err);
+                }
+                document.body.removeChild(textarea);
+            }
         }
 
         function clearForm() {
@@ -602,6 +626,7 @@
         }
 
         function escapeHtml(text) {
+            if (!text) return '';
             const map = {
                 '&': '&amp;',
                 '<': '&lt;',
