@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotted Clothing - eBay HTML Description Maker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .panel h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="url"],
+        .form-group textarea,
+        .form-group input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .color-picker-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .color-picker-group input[type="color"] {
+            width: 60px;
+            height: 40px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .color-picker-group input[type="text"] {
+            flex: 1;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+        }
+
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.secondary {
+            background: #764ba2;
+        }
+
+        button.secondary:hover {
+            background: #653a8a;
+        }
+
+        .preview-container {
+            background: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            padding: 20px;
+            min-height: 400px;
+            overflow: auto;
+        }
+
+        .html-output {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 500px;
+        }
+
+        .copy-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4caf50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+
+        .copy-notification.show {
+            opacity: 1;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            padding: 20px;
+            opacity: 0.9;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .panel {
+                padding: 15px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+
+        /* eBay Listing Styles */
+        .ebay-listing {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .ebay-listing .listing-header {
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .ebay-listing .listing-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .ebay-listing .listing-section {
+            margin-bottom: 20px;
+            padding: 15px;
+        }
+
+        .ebay-listing .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+        }
+
+        .ebay-listing .listing-image {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .ebay-listing .listing-image img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+        }
+
+        .ebay-listing .features-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .ebay-listing .features-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .ebay-listing .features-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛍️ Spotted Clothing</h1>
+            <p>eBay HTML Description Maker</p>
+        </header>
+
+        <div class="main-content">
+            <div class="panel">
+                <h2>Product Information</h2>
+                <form id="productForm">
+                    <div class="form-group">
+                        <label for="productTitle">Product Title *</label>
+                        <input type="text" id="productTitle" placeholder="e.g., Vintage Denim Jacket" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productDescription">Description *</label>
+                        <textarea id="productDescription" placeholder="Detailed product description..." rows="4" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productImage">Image URL</label>
+                        <input type="url" id="productImage" placeholder="https://example.com/image.jpg">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productFeatures">Features (one per line)</label>
+                        <textarea id="productFeatures" placeholder="High quality materials&#10;Perfect fit&#10;Machine washable" rows="4"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productCondition">Condition</label>
+                        <input type="text" id="productCondition" placeholder="e.g., Brand New, Excellent, Good">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productSize">Size</label>
+                        <input type="text" id="productSize" placeholder="e.g., M, L, XL">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productMaterial">Material</label>
+                        <input type="text" id="productMaterial" placeholder="e.g., 100% Cotton">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="shippingInfo">Shipping Information</label>
+                        <textarea id="shippingInfo" placeholder="Shipping details, estimated delivery time..." rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="returnPolicy">Return Policy</label>
+                        <textarea id="returnPolicy" placeholder="Return policy details..." rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Header Background Color</label>
+                        <div class="color-picker-group">
+                            <input type="color" id="headerBgColor" value="#667eea">
+                            <input type="text" id="headerBgColorText" value="#667eea" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Header Text Color</label>
+                        <div class="color-picker-group">
+                            <input type="color" id="headerTextColor" value="#ffffff">
+                            <input type="text" id="headerTextColorText" value="#ffffff" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Section Background Color</label>
+                        <div class="color-picker-group">
+                            <input type="color" id="sectionBgColor" value="#f8f9fa">
+                            <input type="text" id="sectionBgColorText" value="#f8f9fa" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Section Border Color</label>
+                        <div class="color-picker-group">
+                            <input type="color" id="sectionBorderColor" value="#667eea">
+                            <input type="text" id="sectionBorderColorText" value="#667eea" readonly>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" onclick="generatePreview()">Generate Preview</button>
+                        <button type="button" class="secondary" onclick="clearForm()">Clear Form</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="panel">
+                <h2>Live Preview</h2>
+                <div class="preview-container" id="previewContainer">
+                    <p style="text-align: center; color: #999; padding: 50px 20px;">
+                        Fill in the form and click "Generate Preview" to see your eBay listing here.
+                    </p>
+                </div>
+                <div class="button-group">
+                    <button type="button" onclick="showHTMLCode()">View HTML Code</button>
+                    <button type="button" class="secondary" onclick="copyHTMLCode()">Copy HTML Code</button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Made with ❤️ for Spotted Clothing | <a href="https://github.com/latheep/spotted" target="_blank">GitHub</a></p>
+        </footer>
+    </div>
+
+    <div class="copy-notification" id="copyNotification">
+        HTML code copied to clipboard!
+    </div>
+
+    <script>
+        // Global variable to store generated HTML
+        let generatedHTML = '';
+
+        // Color picker sync
+        document.getElementById('headerBgColor').addEventListener('input', function(e) {
+            document.getElementById('headerBgColorText').value = e.target.value;
+            generatePreview();
+        });
+
+        document.getElementById('headerTextColor').addEventListener('input', function(e) {
+            document.getElementById('headerTextColorText').value = e.target.value;
+            generatePreview();
+        });
+
+        document.getElementById('sectionBgColor').addEventListener('input', function(e) {
+            document.getElementById('sectionBgColorText').value = e.target.value;
+            generatePreview();
+        });
+
+        document.getElementById('sectionBorderColor').addEventListener('input', function(e) {
+            document.getElementById('sectionBorderColorText').value = e.target.value;
+            generatePreview();
+        });
+
+        function generatePreview() {
+            const title = document.getElementById('productTitle').value;
+            const description = document.getElementById('productDescription').value;
+            const imageUrl = document.getElementById('productImage').value;
+            const features = document.getElementById('productFeatures').value;
+            const condition = document.getElementById('productCondition').value;
+            const size = document.getElementById('productSize').value;
+            const material = document.getElementById('productMaterial').value;
+            const shipping = document.getElementById('shippingInfo').value;
+            const returnPolicy = document.getElementById('returnPolicy').value;
+            
+            const headerBgColor = document.getElementById('headerBgColor').value;
+            const headerTextColor = document.getElementById('headerTextColor').value;
+            const sectionBgColor = document.getElementById('sectionBgColor').value;
+            const sectionBorderColor = document.getElementById('sectionBorderColor').value;
+
+            if (!title || !description) {
+                alert('Please fill in at least the Product Title and Description');
+                return;
+            }
+
+            let html = `<div class="ebay-listing" style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">
+    <div class="listing-header" style="text-align: center; background-color: ${headerBgColor}; color: ${headerTextColor}; padding: 20px; margin-bottom: 20px; border-radius: 5px;">
+        <h1 class="listing-title" style="font-size: 24px; font-weight: bold; margin-bottom: 10px;">${escapeHtml(title)}</h1>
+    </div>`;
+
+            if (imageUrl) {
+                html += `
+    <div class="listing-image" style="text-align: center; margin: 20px 0;">
+        <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(title)}" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 5px;">
+    </div>`;
+            }
+
+            html += `
+    <div class="listing-section" style="background-color: ${sectionBgColor}; margin-bottom: 20px; padding: 15px; border-left: 4px solid ${sectionBorderColor}; border-radius: 5px;">
+        <h2 class="section-title" style="font-size: 18px; font-weight: bold; color: ${sectionBorderColor}; margin-bottom: 10px;">Description</h2>
+        <p style="line-height: 1.6;">${escapeHtml(description).replace(/\n/g, '<br>')}</p>
+    </div>`;
+
+            if (condition || size || material) {
+                html += `
+    <div class="listing-section" style="background-color: ${sectionBgColor}; margin-bottom: 20px; padding: 15px; border-left: 4px solid ${sectionBorderColor}; border-radius: 5px;">
+        <h2 class="section-title" style="font-size: 18px; font-weight: bold; color: ${sectionBorderColor}; margin-bottom: 10px;">Product Details</h2>
+        <table style="width: 100%; border-collapse: collapse;">`;
+                
+                if (condition) {
+                    html += `
+            <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd; font-weight: bold; width: 150px;">Condition:</td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${escapeHtml(condition)}</td>
+            </tr>`;
+                }
+                
+                if (size) {
+                    html += `
+            <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd; font-weight: bold;">Size:</td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${escapeHtml(size)}</td>
+            </tr>`;
+                }
+                
+                if (material) {
+                    html += `
+            <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd; font-weight: bold;">Material:</td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${escapeHtml(material)}</td>
+            </tr>`;
+                }
+                
+                html += `
+        </table>
+    </div>`;
+            }
+
+            if (features) {
+                const featuresList = features.split('\n').filter(f => f.trim());
+                if (featuresList.length > 0) {
+                    html += `
+    <div class="listing-section" style="background-color: ${sectionBgColor}; margin-bottom: 20px; padding: 15px; border-left: 4px solid ${sectionBorderColor}; border-radius: 5px;">
+        <h2 class="section-title" style="font-size: 18px; font-weight: bold; color: ${sectionBorderColor}; margin-bottom: 10px;">Features</h2>
+        <ul class="features-list" style="list-style-type: none; padding: 0;">`;
+                    
+                    featuresList.forEach(feature => {
+                        html += `
+            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+                <span style="position: absolute; left: 0; color: ${sectionBorderColor}; font-weight: bold;">✓</span>
+                ${escapeHtml(feature)}
+            </li>`;
+                    });
+                    
+                    html += `
+        </ul>
+    </div>`;
+                }
+            }
+
+            if (shipping) {
+                html += `
+    <div class="listing-section" style="background-color: ${sectionBgColor}; margin-bottom: 20px; padding: 15px; border-left: 4px solid ${sectionBorderColor}; border-radius: 5px;">
+        <h2 class="section-title" style="font-size: 18px; font-weight: bold; color: ${sectionBorderColor}; margin-bottom: 10px;">Shipping Information</h2>
+        <p style="line-height: 1.6;">${escapeHtml(shipping).replace(/\n/g, '<br>')}</p>
+    </div>`;
+            }
+
+            if (returnPolicy) {
+                html += `
+    <div class="listing-section" style="background-color: ${sectionBgColor}; margin-bottom: 20px; padding: 15px; border-left: 4px solid ${sectionBorderColor}; border-radius: 5px;">
+        <h2 class="section-title" style="font-size: 18px; font-weight: bold; color: ${sectionBorderColor}; margin-bottom: 10px;">Return Policy</h2>
+        <p style="line-height: 1.6;">${escapeHtml(returnPolicy).replace(/\n/g, '<br>')}</p>
+    </div>`;
+            }
+
+            html += `
+    <div style="text-align: center; padding: 20px; background-color: ${sectionBgColor}; border-radius: 5px; margin-top: 20px;">
+        <p style="font-size: 14px; color: #666;">Thank you for shopping with Spotted Clothing!</p>
+    </div>
+</div>`;
+
+            generatedHTML = html;
+            document.getElementById('previewContainer').innerHTML = html;
+        }
+
+        function showHTMLCode() {
+            if (!generatedHTML) {
+                alert('Please generate a preview first');
+                return;
+            }
+
+            const previewContainer = document.getElementById('previewContainer');
+            previewContainer.innerHTML = `<div class="html-output">${escapeHtml(generatedHTML)}</div>`;
+        }
+
+        function copyHTMLCode() {
+            if (!generatedHTML) {
+                alert('Please generate a preview first');
+                return;
+            }
+
+            navigator.clipboard.writeText(generatedHTML).then(() => {
+                const notification = document.getElementById('copyNotification');
+                notification.classList.add('show');
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }).catch(err => {
+                alert('Failed to copy: ' + err);
+            });
+        }
+
+        function clearForm() {
+            if (confirm('Are you sure you want to clear all fields?')) {
+                document.getElementById('productForm').reset();
+                document.getElementById('headerBgColor').value = '#667eea';
+                document.getElementById('headerBgColorText').value = '#667eea';
+                document.getElementById('headerTextColor').value = '#ffffff';
+                document.getElementById('headerTextColorText').value = '#ffffff';
+                document.getElementById('sectionBgColor').value = '#f8f9fa';
+                document.getElementById('sectionBgColorText').value = '#f8f9fa';
+                document.getElementById('sectionBorderColor').value = '#667eea';
+                document.getElementById('sectionBorderColorText').value = '#667eea';
+                
+                generatedHTML = '';
+                document.getElementById('previewContainer').innerHTML = `
+                    <p style="text-align: center; color: #999; padding: 50px 20px;">
+                        Fill in the form and click "Generate Preview" to see your eBay listing here.
+                    </p>`;
+            }
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Auto-update preview on input changes (with debouncing)
+        let debounceTimer;
+        const formInputs = document.querySelectorAll('#productForm input, #productForm textarea');
+        formInputs.forEach(input => {
+            input.addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    if (document.getElementById('productTitle').value && 
+                        document.getElementById('productDescription').value) {
+                        generatePreview();
+                    }
+                }, 500);
+            });
+        });
+    </script>
+</body>
+</html>
